@@ -1,0 +1,143 @@
+
+
+Codigo Base Hilo -> 17
+Fibonacci (17): [8, 55, 5, 34, 0, 3, 1, 13, 89, 1, 2, 21, 377, 233, 144, 610, 987]
+Tiempo de ejecución: 0.0026 segundos
+
+Codigo Modificado Hilo -> 17
+Fibonacci (17): [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987]
+Tiempo de ejecución: 0.0027 segundos
+
+Codigo Base Proceso -> 17
+Fibonacci (17): [144, 2, 34, 89, 3, 55, 8, 233, 1, 0, 1, 5, 21, 13, 377, 610, 987]
+Tiempo de ejecución: 1.9538 segundos
+
+Codigo Modificado Proceso -> 17
+Fibonacci (17): [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987]
+Tiempo de ejecución: 1.9145 segundos
+
+Codigo Base Hilo -> 20
+Fibonacci (20): [2, 0, 5, 1, 8, 3, 34, 13, 55, 1, 89, 21, 377, 233, 144, 610, 1597, 2584, 4181, 987]
+Tiempo de ejecución: 0.0048 segundos
+
+Codigo Modificado Hilo -> 20
+Fibonacci (20): [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181]
+Tiempo de ejecución: 0.0039 segundos
+
+Codigo Base Proceso -> 20
+Fibonacci (20): [144, 89, 2, 377, 34, 233, 3, 55, 8, 21, 5, 1, 0, 1, 13, 610, 987, 2584, 1597, 4181]
+Tiempo de ejecución: 1.9910 segundos
+
+Codigo Modificado Proceso -> 20
+Fibonacci (20): [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181]
+Tiempo de ejecución: 4.4482 segundos
+
+Codigo Base Hilo -> 37
+Fibonacci (37): [55, 5, 196418, 121393, 2, 1597, 17711, 1, 75025, 987, 21, 46368, 317811, 0, 1, 4181, 28657, 8, 610, 13, 89, 3, 6765, 34, 2584, 377, 233, 144, 10946, 832040, 514229, 1346269, 3524578, 2178309, 5702887, 9227465, 14930352]
+Tiempo de ejecución: 5.9477 segundos
+
+Codigo Modificado Hilo -> 37
+Fibonacci (37): [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657, 46368, 75025, 121393, 196418, 317811, 514229, 832040, 1346269, 2178309, 3524578, 5702887, 9227465, 14930352]
+Tiempo de ejecución: 5.9175 segundos
+
+Codigo Base Proceso -> 37
+Fibonacci (37): [233, 1346269, 832040, 987, 55, 2, 196418, 21, 5, 1597, 1, 121393, 75025, 46368, 1, 514229, 610, 10946, 6765, 317811, 28657, 2584, 144, 0, 17711, 13, 3, 89, 34, 377, 8, 4181, 2178309, 3524578, 5702887, 9227465, 14930352]
+Tiempo de ejecución: 6.6814 segundos
+
+Codigo Modificado Proceso -> 37
+Fibonacci (37): [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657, 46368, 75025, 121393, 196418, 317811, 514229, 832040, 1346269, 2178309, 3524578, 5702887, 9227465, 14930352]
+Tiempo de ejecución: 6.5765 segundos
+
+
+=========================================================
+PREGUNTAS ADICIONALES (para reflexionar después del reto)
+=========================================================
+
+1. ¿Cuáles ciclos `for` en el código consideraste paralelizables? ¿Por qué?
+
+El ciclo que arma y calcula los resultados (originalmente algo como
+`for i in range(n_elementos): resultados[i] = fibonacci(i)`) es
+paralelizable porque cada iteración es independiente: calcular
+fibonacci(5) no necesita el resultado de fibonacci(4) ni de ninguna
+otra iteración del ciclo. Por eso se pudo reemplazar por:
+
+    futures = [executor.submit(fibonacci, i) for i in range(n_elementos)]
+
+enviando cada cálculo a un hilo o proceso distinto. El ciclo de
+impresión final, en cambio, no se paraleliza, porque ahí sí importa el
+orden (ver pregunta 2).
+
+2. ¿Cómo evitaste las trampas seriales, especialmente en la impresión
+de resultados?
+
+La trampa estaba en cómo se recogían los resultados. En `baseCode.py`:
+
+    for i, future in enumerate(concurrent.futures.as_completed(futures)):
+        resultados[i] = future.result()
+
+`as_completed()` entrega los futures en el orden en que van
+terminando, no en el orden en que se enviaron. Como fibonacci(2) es
+casi instantáneo y fibonacci(16) tarda más, los resultados pequeños
+"adelantan" a los grandes y `resultados[i]` los guarda en la posición
+equivocada. Por eso en el log de "Codigo Base" la lista sale
+desordenada, ej: [8, 55, 5, 34, 0, 3, ...] en vez de la secuencia real
+de Fibonacci. El programa no marca error, solo entrega datos mal
+ubicados: esa es la trampa.
+
+La corrección en `taller_1.py` fue recuperar el índice original de
+cada future antes de guardarlo:
+
+    resultados[futures.index(future)] = future.result()
+
+Así, sin importar el orden en que terminen los hilos/procesos, cada
+resultado cae en la posición que le corresponde. Además, la impresión
+(`print`) se dejó fuera del ciclo paralelo y se ejecuta una sola vez al
+final, cuando ya todos los resultados están listos, para evitar que
+varios hilos/procesos intenten imprimir al tiempo y se mezcle la
+salida en consola.
+
+3. ¿Qué impacto tuvo la paralelización en el rendimiento del cálculo
+de Fibonacci?
+
+Con hilos los tiempos fueron muy bajos (0.0026s con N=17, 0.0048s con
+N=20) y solo se dispararon con N=37 (~5.95s) porque ahí el cálculo en
+sí ya es pesado. Con procesos, en cambio, los tiempos fueron altos
+incluso para N chicos (1.95s con N=17), porque crear procesos nuevos
+tiene un costo fijo que no depende de qué tan simple sea la tarea.
+Solo con N=37, donde el cálculo real pesa más que ese costo fijo,
+procesos y hilos terminaron parecidos (6.68s vs 5.95s). Conclusión: la
+paralelización solo ayuda cuando el trabajo por tarea es lo bastante
+grande como para justificar el costo de repartirlo.
+
+4. ¿Qué limitaciones encontraste al intentar paralelizar el cálculo?
+
+- Crear procesos nuevos toma tiempo, y ese costo se nota más cuando
+  las tareas son rápidas: por eso con procesos, incluso N=17 (1.95s)
+  ya era mucho más lento que N=17 con hilos (0.0026s).
+- Las tareas no cuestan lo mismo: fibonacci(2) es casi instantáneo y
+  fibonacci(36) tarda segundos, así que algunos hilos/procesos
+  terminan rápido y quedan sin nada que hacer mientras otros siguen
+  trabajando.
+- Fibonacci recursivo recalcula todo desde cero cada vez (para hallar
+  fibonacci(10) vuelve a calcular fibonacci(9), fibonacci(8), etc.,
+  una y otra vez), así que el cálculo crece muy rápido con N sin
+  importar cuánto se paralelice.
+- Hay un límite físico: la máquina solo tiene cierta cantidad de
+  núcleos de CPU, así que agregar más hilos/procesos que núcleos no
+  acelera nada, y de hecho puede volverse más lento.
+
+5. ¿Cómo escalaría tu solución con un número mayor de hilos/procesos o
+un valor más grande de `N`?
+
+Con un N más grande, lo primero que atacaría es el algoritmo: hoy
+Fibonacci recalcula todo desde cero en cada llamada, así que crece
+muy rápido en tiempo. Guardando resultados ya calculados (memoización)
+o calculando de forma iterativa, cada tarea sería mucho más liviana y
+la paralelización rendiría más.
+
+En cuanto a hilos/procesos, agregar más de los que la CPU tiene
+núcleos no ayuda, solo genera más overhead. Lo ideal es ajustar el
+número de workers a la cantidad de núcleos disponibles, y repartir el
+trabajo en bloques en vez de una tarea por cada número (por ejemplo,
+con `executor.map` y su parámetro `chunksize`), para no pagar el costo
+de crear una tarea nueva por cada valor pequeño de N.
