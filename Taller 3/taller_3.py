@@ -117,5 +117,5 @@ if __name__ == "__main__":
         ejecutar("comprar_v1  sin lock", comprar_v1, s)
         ejecutar("comprar_v2  lock (pago dentro)", comprar_v2, s)
         ejecutar("comprar_v3  lock mínimo+semáforo", crear_comprar_v3(0.0), s)
-        ejecutar("bcomprar_v3b con 20% pagos fallidos", crear_comprar_v3(0.20), s)
+        ejecutar("comprar_v3b con 20% pagos fallidos", crear_comprar_v3(0.20), s)
         print()

@@ -17,4 +17,4 @@ bcomprar_v3b con 20% pagos fallidos vendidas:  44 | disponibles:   6 | tiempo:  
 comprar_v1  sin lock       vendidas: 100 | disponibles: -50 | tiempo:  0.016s | ERROR (sobreventa)
 comprar_v2  lock (pago dentro) vendidas:  50 | disponibles:   0 | tiempo:  0.527s | CORRECTO
 comprar_v3  lock mínimo+semáforo vendidas:  50 | disponibles:   0 | tiempo:  0.108s | CORRECTO
-bcomprar_v3b con 20% pagos fallidos vendidas:  38 | disponibles:  12 | tiempo:  0.108s | CORRECTO | boletas sin vender: 12
+comprar_v3b con 20% pagos fallidos vendidas:  38 | disponibles:  12 | tiempo:  0.108s | CORRECTO | boletas sin vender: 12
