@@ -1,0 +1,20 @@
+PS C:\Users\danie\OneDrive\Desktop\Paralelas\Paralelas&Distribuidas-202410213> & c:\python314\python.exe "c:/Users/danie/OneDrive/Desktop/Paralelas/Paralelas&Distribuidas-202410213/Taller 3/taller_3.py"
+50 boletas, 100 compradores, pago = 0.01s, pasarela = 5 simultáneos
+
+--- Corrida 1 ---
+comprar_v1  sin lock       vendidas: 100 | disponibles: -50 | tiempo:  0.016s | ERROR (sobreventa)
+comprar_v2  lock (pago dentro) vendidas:  50 | disponibles:   0 | tiempo:  0.531s | CORRECTO
+comprar_v3  lock mínimo+semáforo vendidas:  50 | disponibles:   0 | tiempo:  0.108s | CORRECTO
+bcomprar_v3b con 20% pagos fallidos vendidas:  40 | disponibles:  10 | tiempo:  0.107s | CORRECTO | boletas sin vender: 10
+
+--- Corrida 2 ---
+comprar_v1  sin lock       vendidas: 100 | disponibles: -50 | tiempo:  0.019s | ERROR (sobreventa)
+comprar_v2  lock (pago dentro) vendidas:  50 | disponibles:   0 | tiempo:  0.523s | CORRECTO
+comprar_v3  lock mínimo+semáforo vendidas:  50 | disponibles:   0 | tiempo:  0.108s | CORRECTO
+bcomprar_v3b con 20% pagos fallidos vendidas:  44 | disponibles:   6 | tiempo:  0.109s | CORRECTO | boletas sin vender: 6
+
+--- Corrida 3 ---
+comprar_v1  sin lock       vendidas: 100 | disponibles: -50 | tiempo:  0.016s | ERROR (sobreventa)
+comprar_v2  lock (pago dentro) vendidas:  50 | disponibles:   0 | tiempo:  0.527s | CORRECTO
+comprar_v3  lock mínimo+semáforo vendidas:  50 | disponibles:   0 | tiempo:  0.108s | CORRECTO
+bcomprar_v3b con 20% pagos fallidos vendidas:  38 | disponibles:  12 | tiempo:  0.108s | CORRECTO | boletas sin vender: 12
