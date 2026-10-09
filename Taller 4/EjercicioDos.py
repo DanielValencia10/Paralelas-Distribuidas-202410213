@@ -1,7 +1,7 @@
 # =============================================================
-# EJERCICIO 2 - ARQUITECTURA SIMP (con hilos)
-# Suma de una matriz 1000x1000 dividida en bloques de 100x100
-# Solo se usa Python basico (random, threading, time). Sin NumPy.
+# EJERCICIO 2 - ARQUITECTURA SIMP
+# Multiplicacion de una matriz 1000x1000 
+# Solo se usa Python basico (random, time).
 # =============================================================
 import random      # para generar numeros aleatorios
 import time        # para medir tiempos
@@ -11,8 +11,6 @@ import matplotlib.pyplot as plt
 # ---------- PASO 0: parametros ----------
 TAMANO_MATRIZ = 1000   # la matriz es de 1000 x 1000
 TAMANO_BLOQUE = 100    # cada bloque es de 100 x 100
-BLOQUES_POR_LADO = TAMANO_MATRIZ // TAMANO_BLOQUE   # 1000/100 = 10
-TOTAL_BLOQUES = BLOQUES_POR_LADO * BLOQUES_POR_LADO # 10*10 = 100 bloques
 
 matrizUno = []
 matrizUno = [[random.randint(1, 10) for _ in range(TAMANO_MATRIZ)] for _ in range(TAMANO_MATRIZ)]
